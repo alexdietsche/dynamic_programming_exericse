@@ -25,10 +25,13 @@ clear all;
 close all;
 clc;
 
+global DEBUG
+DEBUG = 0;
+
 %% Options
 % [M, N]
 mapSize = [15, 20];
-% Set to true to generate a random map of size mapSize, else set to false 
+% Set to true to generate a random map of size mapSize, else set to false
 % to load the pre-exsisting example map
 generateRandomWorld = false;
 
@@ -46,7 +49,7 @@ Nc = 10; % Time steps required to bring drone to base when it crashes
 P_WIND = 0.1; % Gust of wind probability
 
 % IDs of elements in the map matrix
-global FREE TREE SHOOTER PICK_UP DROP_OFF BASE 
+global FREE TREE SHOOTER PICK_UP DROP_OFF BASE
 FREE = 0;
 TREE = 1;
 SHOOTER = 2;
@@ -67,7 +70,7 @@ HOVER = 5;
 % specified in the PDF.
 disp('Generate map');
 if generateRandomWorld
-	[map] = GenerateWorld(mapSize(1), mapSize(2));
+    [map] = GenerateWorld(mapSize(1), mapSize(2));
 else
     % We can load a pre-generated map.
     load('exampleWorld.mat');
@@ -83,8 +86,8 @@ for m = 1 : size(map, 1)
     for n = 1 : size(map, 2)
         if map(m, n) ~= TREE
             stateSpace = [stateSpace;
-                          m, n, 0;
-                          m, n, 1];
+                m, n, 0;
+                m, n, 1];
         end
     end
 end
@@ -94,8 +97,8 @@ K=size(stateSpace,1);
 
 %% Set the following to true as you progress with the files
 transitionProbabilitiesImplemented = true;
-stageCostsImplemented = false;
-valueIterationImplemented = false; 
+stageCostsImplemented = true;
+valueIterationImplemented = false;
 policyIterationImplemented = false;
 linearProgrammingImplemented = false;
 
@@ -104,7 +107,7 @@ global TERMINAL_STATE_INDEX
 if transitionProbabilitiesImplemented
     % TODO: Question a)
     TERMINAL_STATE_INDEX = ComputeTerminalStateIndex(stateSpace, map);
-end                  
+end
 %% Compute transition probabilities
 if transitionProbabilitiesImplemented
     disp('Compute transition probabilities');
@@ -116,24 +119,25 @@ if transitionProbabilitiesImplemented
     
     % TODO: Question b)
     P = ComputeTransitionProbabilities(stateSpace, map);
+    
+    if DEBUG
+        P_my = P;
+        load('exampleP.mat')
+        % difference: +: there shouldn't be an entry, -: there's something missing
+        P_diff = P_my - P;
+        figure
+        spy(P_diff)
+        % differences are in extremely small order of magnitude, probably coming
+        % from numerical deviations around shooters
+        disp('number of differences of larger magnitude than 1e-16:')
+        sum(any(any(P_diff > 1e-16, 2))) % 0
+        disp('number of differences of larger magnitude than 1e-17:')
+        sum(any(any(P_diff > 1e-17, 2))) % 5
+    end
 end
 
-% debugging:
-P_my = P;
-load('exampleP.mat')
-% difference: +: there shouldn't be an entry, -: there's something missing
-P_diff = P_my - P;
-figure
-spy(P_diff)
-% differences are in extremely small order of magnitude, probably coming
-% from numerical deviations around shooters
-disp('number of differences of larger magnitude than 1e-16:')
-sum(any(any(P_diff > 1e-16))) % 0
-disp('number of differences of larger magnitude than 1e-17:')
-sum(any(any(P_diff > 1e-17))) % 5
-
 %% Compute stage costs
-if stageCostsImplemented 
+if stageCostsImplemented
     disp('Compute stage costs');
     % Compute the stage costs for all states in the state space for all
     % control inputs.
@@ -142,6 +146,23 @@ if stageCostsImplemented
     
     % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);
+    
+    if DEBUG
+        G_my = G;
+        load('exampleG.mat')
+        % difference: +: there shouldn't be an entry, -: there's something missing
+        G_diff = G_my - G;
+        figure
+        spy(G_diff)
+        [~, ind] = ismember(1, any(G_diff > 1e-5, 2), 'rows')
+        % differences are in extremely small order of magnitude, probably coming
+        % from numerical deviations around shooters
+        disp('number of differences of larger magnitude than 1e-15:')
+        sum(any(G_diff > 1e-15, 2))
+        disp('number of differences of larger magnitude than 1e-16:')
+        sum(any(G_diff > 1e-16, 2))
+    end
+    
 end
 
 %% Solve stochastic shortest path problem
