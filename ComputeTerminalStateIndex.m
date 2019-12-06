@@ -20,5 +20,9 @@ function stateIndex = ComputeTerminalStateIndex(stateSpace, map)
 %           stateSpace matrix
 
 global DROP_OFF
+% find drop_off location in map
+[m_terminal, n_terminal] = find(map==DROP_OFF);
+% find index in stateSpace of drop_off location
+[~, stateIndex] = ismember([m_terminal, n_terminal, 1], stateSpace, 'rows');
                   
 end

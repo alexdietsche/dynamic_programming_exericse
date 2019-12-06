@@ -30,7 +30,7 @@ clc;
 mapSize = [15, 20];
 % Set to true to generate a random map of size mapSize, else set to false 
 % to load the pre-exsisting example map
-generateRandomWorld = true;
+generateRandomWorld = false;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
@@ -93,7 +93,7 @@ global K
 K=size(stateSpace,1);
 
 %% Set the following to true as you progress with the files
-transitionProbabilitiesImplemented = false;
+transitionProbabilitiesImplemented = true;
 stageCostsImplemented = false;
 valueIterationImplemented = false; 
 policyIterationImplemented = false;
@@ -118,13 +118,27 @@ if transitionProbabilitiesImplemented
     P = ComputeTransitionProbabilities(stateSpace, map);
 end
 
+% debugging:
+P_my = P;
+load('exampleP.mat')
+% difference: +: there shouldn't be an entry, -: there's something missing
+P_diff = P_my - P;
+figure
+spy(P_diff)
+% differences are in extremely small order of magnitude, probably coming
+% from numerical deviations around shooters
+disp('number of differences of larger magnitude than 1e-16:')
+sum(any(any(P_diff > 1e-16))) % 0
+disp('number of differences of larger magnitude than 1e-17:')
+sum(any(any(P_diff > 1e-17))) % 5
+
 %% Compute stage costs
 if stageCostsImplemented 
     disp('Compute stage costs');
     % Compute the stage costs for all states in the state space for all
     % control inputs.
     % The stage cost matrix has the dimension (K x L), i.e. the entry G(i, l)
-    % represents the cost if we are in state i and apply control input l.
+    % represents the expected cost if we are in state i and apply control input l.
     
     % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);

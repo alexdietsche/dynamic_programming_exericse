@@ -22,7 +22,7 @@ function G = ComputeStageCosts( stateSpace, map )
 %       G:
 %           A (K x L)-matrix containing the stage costs of all states in
 %           the state space for all control inputs. The entry G(i, l)
-%           represents the expected stage cost if we are in state i and 
+%           represents the ***expected*** stage cost if we are in state i and 
 %           apply control input l.
 
     global GAMMA R P_WIND Nc
