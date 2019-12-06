@@ -31,12 +31,7 @@ global NORTH SOUTH EAST WEST HOVER
 global K TERMINAL_STATE_INDEX
 
 % TODO: 
-% - precompute shooting array -> lookup-table for p_r
-% - conversion functions: state2coords() and coords2state()
-% - has_package bool that can be added to state
-% - compute base (without package) indes just like TERMINAL_STATE_INDEX
-% - compute pick-up coords as global
-% - use spy() to validate P and G matrices
+% - figure out how to avoid small rounding errors of base in probabilities near shooters
 
 % coords of pick-up
 [m_p, n_p] = find(map==PICK_UP);
