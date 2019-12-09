@@ -54,6 +54,12 @@ windMovements = [1, 0;
     0, -1];
 
 for i = 1 : K
+    
+    % check for terminal state
+    if (i == TERMINAL_STATE_INDEX)
+        continue
+    end
+    
     currentState = stateSpace(i, :);
     psi = currentState(3);
     
@@ -62,31 +68,18 @@ for i = 1 : K
         m = currentState(1);
         n = currentState(2);
         
-        if (u == NORTH)
-            n = n + 1;
-        elseif (u == SOUTH)
-            n = n - 1;
-        elseif (u == EAST)
-            m = m + 1;
-        elseif (u == WEST)
-            m = m - 1;
-        elseif (u == HOVER)
-            % no movement
+        switch u
+            case NORTH
+                n = n +1;
+            case SOUTH
+                n = n - 1;
+            case EAST
+                m = m + 1;
+            case WEST
+                m = m - 1;
+            case HOVER
+                % no movement
         end
-        
-        %         switch u
-        %             case NORTH
-        %                 n = n +1;
-        %             case SOUTH
-        %                 n = n - 1;
-        %             case EAST
-        %                 m = m + 1;
-        %             case WEST
-        %                 m = m - 1;
-        %             case HOVER
-        %                 % no movement
-        %         end
-        
         
         [isInMap, j] = ismember([m, n, psi], stateSpace, 'row');
         
@@ -112,9 +105,6 @@ for i = 1 : K
         
         if (j == pickUpIdx)
             P(i,pickedUpIdx, u) = P(i,pickedUpIdx, u) + probabilityNoWindNoShootDown;
-            
-        elseif (j == pickedUpIdx)
-            P(j, pickedUpIdx, u) = 1;
             
         else
             P(i, j, u) = P(i, j, u) + probabilityNoWindNoShootDown;
@@ -155,6 +145,11 @@ for i = 1 : K
         end
     end
     
+end
+
+% terminal state 
+for i = 1 : 5
+    P(TERMINAL_STATE_INDEX, TERMINAL_STATE_INDEX, i) = 1;
 end
 
 end
