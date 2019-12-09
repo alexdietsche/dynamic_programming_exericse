@@ -61,27 +61,32 @@ for i = 1 : K
     end
     
     currentState = stateSpace(i, :);
+    m_i = currentState(1);
+    n_i = currentState(2);
     psi = currentState(3);
     
     for u = 1 : 5
-        
-        m = currentState(1);
-        n = currentState(2);
-        
+ 
         switch u
             case NORTH
-                n = n +1;
+                m_j = m_i;
+                n_j = n_i +1;
             case SOUTH
-                n = n - 1;
+                m_j = m_i;
+                n_j = n_i - 1;
             case EAST
-                m = m + 1;
+                m_j = m_i + 1;
+                n_j = n_i;
             case WEST
-                m = m - 1;
+                m_j = m_i - 1;
+                n_j = n_i;
             case HOVER
+                m_j = m_i;
+                n_j = n_i;
                 % no movement
         end
         
-        [isInMap, j] = ismember([m, n, psi], stateSpace, 'row');
+        [isInMap, j] = ismember([m_j, n_j, psi], stateSpace, 'row');
         
         % check if move valid
         if (~isInMap)
@@ -92,7 +97,7 @@ for i = 1 : K
         shootDownProbability = 0;
         if (shootersPresent)
             for s = 1 : numberOfShooters
-                distanceToShooter = abs(m - shooterPositionsX(s)) + abs(n - shooterPositionsY(s));
+                distanceToShooter = abs(m_j - shooterPositionsX(s)) + abs(n_j - shooterPositionsY(s));
                 if (distanceToShooter <= R)
                     shootDownProbability = shootDownProbability + GAMMA / (1 + distanceToShooter);
                 end
@@ -116,15 +121,15 @@ for i = 1 : K
         
         % wind
         for k = 1 : 4
-            nWind = n + windMovements(k, 2);
-            mWind = m + windMovements(k, 1);
-            [isInMap, j] = ismember([mWind , nWind, psi], stateSpace, 'row');
+            n_w = n_j + windMovements(k, 2);
+            m_w = m_j + windMovements(k, 1);
+            [isInMap, j] = ismember([m_w , n_w, psi], stateSpace, 'row');
             
             % calculate shoot down probability
             shootDownProbability = 0;
             if (shootersPresent)
                 for s = 1 : numberOfShooters
-                    distanceToShooter = abs(mWind - shooterPositionsX(s)) + abs(nWind - shooterPositionsY(s));
+                    distanceToShooter = abs(m_w - shooterPositionsX(s)) + abs(n_w - shooterPositionsY(s));
                     if (distanceToShooter <= R)
                         shootDownProbability = shootDownProbability + GAMMA / (1 + distanceToShooter);
                     end
@@ -147,7 +152,7 @@ for i = 1 : K
     
 end
 
-% terminal state 
+% terminal state
 for i = 1 : 5
     P(TERMINAL_STATE_INDEX, TERMINAL_STATE_INDEX, i) = 1;
 end
