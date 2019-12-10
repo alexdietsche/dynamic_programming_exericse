@@ -30,14 +30,6 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 %       	input for each element of the state space. Mapping of the
 %       	terminal state is arbitrary (for example: HOVER).
 global K HOVER
-
-%% Handle terminal state
-% Do yo need to do something with the teminal state before starting policy
-% iteration ? Probably assign J_opt zero cost there...
-global TERMINAL_STATE_INDEX
-% IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
-% in the ComputeTerminalStateIndex.m file (see main.m)
-
 J_opt = rand(K, 1);
 u_opt_ind = zeros(K, 1);
 thres = 1e-20;
@@ -58,5 +50,15 @@ while true
     iterator = iterator + 1;
     
 end
+
+%% Handle terminal state
+% Do yo need to do something with the teminal state before starting policy
+% iteration ? Probably assign J_opt zero cost there...
+global TERMINAL_STATE_INDEX
+% IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
+% in the ComputeTerminalStateIndex.m file (see main.m)
+
+% TODO: what do they mean?
+J_opt(TERMINAL_STATE_INDEX) = 0;
 
 end
