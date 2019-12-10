@@ -38,5 +38,25 @@ global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
+J_opt = rand(K, 1);
+u_opt_ind = zeros(K, 1);
+thres = 1e-20;
+iterator = 0;
+
+while true
+    
+    J_opt_prev = J_opt;
+    
+    for i = 1 : K
+        [J_opt(i), u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))'*J_opt);
+    end
+    
+    if norm(J_opt_prev - J_opt) <= thres
+        break;
+    end
+    
+    iterator = iterator + 1;
+    
+end
 
 end
