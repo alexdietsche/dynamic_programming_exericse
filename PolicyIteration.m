@@ -32,6 +32,25 @@ function [ J_opt, u_opt_ind ] = PolicyIteration( P, G )
 
 global K HOVER
 
+% initialize with proper policy (taken from value iteration) 
+% TODO: try HOVER
+% [~, u_opt_init] = ValueIteration(P, G);
+u_opt_init = 5 * ones(476, 1);
+
+% policy evaluation: solve system of linear equations
+P_opt = zeros(K, K);
+% TODO: find better way to do this
+for i = 1 : K
+    P_opt(i, :) = P(i, :, u_opt_init(i));
+end
+G_opt = diag(G(:,u_opt_init));
+
+J_opt = (eye(size(P_opt)) - P_opt)\G_opt;
+
+% policy improvement: obtain new stationary policy
+
+
+
 %% Handle terminal state
 % Do yo need to do something with the teminal state before starting policy
 % iteration?
