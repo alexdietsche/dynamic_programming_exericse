@@ -32,8 +32,11 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 global K HOVER
 J_opt = rand(K, 1);
 u_opt_ind = zeros(K, 1);
-thres = 1e-20;
+thres = 0.001;
 iterator = 0;
+
+% Results very similar to Alex' version, deviating by ~0.02 in J_opt with
+% same threshold criterion.
 
 while true
     
