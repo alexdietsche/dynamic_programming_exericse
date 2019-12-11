@@ -63,6 +63,11 @@ for l = 1 : 5
     A = [A; eye(size(P, [1,2])) - P_opt(:, :, l)];
 end
 
+% get rid of inequalities containing inf
+delete_mask = (b == inf);
+b(delete_mask) = [];
+A(delete_mask, :) = [];
+
 J_opt = linprog(f,A,b,Aeq,beq,lb,ub,options);
 
 % obtain stationary policy given optimal cost-to-go
