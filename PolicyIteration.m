@@ -50,6 +50,7 @@ u_opt_ind = 5 * ones(476, 1);
 while true
     
     J_opt_prev = J_opt;
+    u_opt_prev = u_opt_ind;
     
     % policy evaluation: solve system of linear equations
     % P_opt and G_opt correspond to P and G with the current optimal policy
@@ -68,14 +69,19 @@ while true
     % solve for J: (I - P) must be invertible!
     J_opt = (eye(size(P_opt)) - P_opt)\G_opt;
     
-    % exit condition: iterate until cost-to-go is optimal
-    if J_opt_prev == J_opt
-        break;
-    end
+%     % exit condition: iterate until cost-to-go is optimal
+%     if J_opt_prev == J_opt
+%         break;
+%     end
 
     % policy improvement: obtain new stationary policy (same as VI)
     for i = 1 : K
-        [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))'*J_opt);
+        [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
+    end
+    
+    % exit condition: iterate until policy is optimal
+    if u_opt_prev == u_opt_ind
+        break;
     end
 end
 

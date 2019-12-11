@@ -39,6 +39,38 @@ global TERMINAL_STATE_INDEX
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
+% initialize outputs
+u_opt_ind = zeros(K, 1);
 
+% calculate optimal cost-to-go
+% objective is to minimize negative sum of cost-to-go for all states
+f = -1 * ones(K, 1);
+% inequality constraints for optimal cost-to-go expressed for every input
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+lb = [];
+ub = [];
+options = optimoptions('linprog','Algorithm','interior-point');
+
+% filter out terminal state
+P_opt = P;
+P_opt(TERMINAL_STATE_INDEX, :, :) = 0;
+
+for l = 1 : 5
+    b = [b; G(:, l)];
+    A = [A; eye(size(P, [1,2])) - P_opt(:, :, l)];
+end
+
+J_opt = linprog(f,A,b,Aeq,beq,lb,ub,options);
+
+% obtain stationary policy given optimal cost-to-go
+    for i = 1 : K
+        [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
+    end
+
+J_opt(TERMINAL_STATE_INDEX) = 0;
+    
 end
 

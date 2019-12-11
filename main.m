@@ -100,7 +100,7 @@ transitionProbabilitiesImplemented = true;
 stageCostsImplemented = true;
 valueIterationImplemented = true;
 policyIterationImplemented = true;
-linearProgrammingImplemented = false;
+linearProgrammingImplemented = true;
 
 %% Compute the terminal state index
 global TERMINAL_STATE_INDEX
@@ -154,6 +154,7 @@ if stageCostsImplemented
         G_diff = G_my - G;
         figure
         spy(G_diff)
+        disp('Index where G_diff is larger than 1e-5:')
         [~, ind] = ismember(1, any(G_diff > 1e-5, 2), 'rows')
         % differences are in extremely small order of magnitude, probably coming
         % from numerical deviations around shooters
@@ -187,6 +188,11 @@ if policyIterationImplemented
     if size(J_opt_pi,1)~=K || size(u_opt_ind_pi,1)~=K
         disp('[ERROR] the size of J and u must be K')
     end
+end
+if DEBUG && policyIterationImplemented && valueIterationImplemented
+    u_diff = u_opt_ind_pi - u_opt_ind_vi;
+    disp('Index where optimal policies of VI and PI differ: ')
+    find(u_diff ~= 0, 1)
 end
 if linearProgrammingImplemented
     disp('Solve stochastic shortest path problem with Linear Programming');
