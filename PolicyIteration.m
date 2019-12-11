@@ -36,19 +36,18 @@ global K HOVER
 global TERMINAL_STATE_INDEX
 P_without_terminal_state = P;
 G_without_terminal_state = G;
-P_without_terminal_state(TERMINAL_STATE_INDEX,:,:) = [];
-P_without_terminal_state(:,TERMINAL_STATE_INDEX,:) = [];
+P_without_terminal_state(TERMINAL_STATE_INDEX,:,:) = zeros(K,5);
 
 % initialie cost
-J_opt = zeros(K-1, 1);
+J_opt = zeros(K, 1);
 % initialize policy with hover to be admissible
-u_opt_ind = 5*ones(K-1, 1);
+u_opt_ind = HOVER*ones(K, 1);
 
 
 while true
     
     % get indices of G matrix depending on control input
-    idx = sub2ind(size(G_without_terminal_state), [1:(K-1)]', [u_opt_ind]);
+    idx = sub2ind(size(G_without_terminal_state), [1:K]', [u_opt_ind]);
     G_mu_h = G_without_terminal_state(idx);
     
     % get transition probability matrix for given policy
@@ -64,7 +63,7 @@ while true
     
     % policy improvment
     J_mu_h_next = zeros(size(J_mu_h));
-    for i=1:(K-1)
+    for i=1:K
         for l=1:5
             J_i(l) = G_without_terminal_state(i,l) + P_without_terminal_state(i,:,l)*J_mu_h;
         end
@@ -83,10 +82,5 @@ end
 
 J_opt = J_mu_h_next;
 u_opt_ind = u_opt_ind;
-
-% add terminal state
-J_opt = [J_opt(1:TERMINAL_STATE_INDEX-1); 0; J_opt(TERMINAL_STATE_INDEX:end)]';
-u_opt_ind = [u_opt_ind(1:TERMINAL_STATE_INDEX-1); 0; u_opt_ind(TERMINAL_STATE_INDEX:end)];
-
 
 end
