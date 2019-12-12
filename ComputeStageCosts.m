@@ -41,7 +41,7 @@ for s = 1:num_shooters
     for m_i = (m_s(s) - R):(m_s(s) + R)
         for n_i = (n_s(s) - R):(n_s(s) + R)
             % if cell is inside of map
-            if all(([0, 0] <= [m_i, n_i]) .* ([m_i, n_i] <= size(P_R)))
+            if all(([0, 0] < [m_i, n_i]) .* ([m_i, n_i] <= size(P_R)))
                 % if cell is in range R of shooter
                 dist = abs(m_i - m_s(s)) + abs(n_i - n_s(s));
                 if dist <= R

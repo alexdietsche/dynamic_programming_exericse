@@ -45,7 +45,7 @@ J_opt = zeros(K, 1);
 % using optimal policy from value iteration
 % [~, u_opt_ind] = ValueIteration(P, G);
 % commanding HOVER at all states
-u_opt_ind = 5 * ones(476, 1);
+u_opt_ind = 5 * ones(K, 1);
 
 while true
     
