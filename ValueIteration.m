@@ -29,39 +29,52 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 %       	A (K x 1)-matrix containing the index of the optimal control
 %       	input for each element of the state space. Mapping of the
 %       	terminal state is arbitrary (for example: HOVER).
-global K HOVER
-J_opt = rand(K, 1);
+global K HOVER TERMINAL_STATE_INDEX
+
+% initialization
+terminationThreshold = 0.00001;
+
+J_opt = zeros(K, 1);
+J_opt_next = ones(K, 1);
 u_opt_ind = zeros(K, 1);
-thres = 0.001;
-iterator = 0;
 
-% Results very similar to Alex' version, deviating by ~0.02 in J_opt with
-% same threshold criterion.
 
-while true
+while (true)
     
-    J_opt_prev = J_opt;
-    
-    for i = 1 : K
-        [J_opt(i), u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))'*J_opt);
+    for i = 1:K
+        cost_to_go_candidates = zeros(5, 1);
+        for l = 1:5
+            cost_to_go_last = 0;
+            for j = 1:K
+                if i == TERMINAL_STATE_INDEX
+                    cost_to_go_last = 0;
+                else
+                    cost_to_go_last = cost_to_go_last + P(i, j, l) * J_opt_next(j);
+                end
+                
+            end
+            cost_to_go_candidates(l) = G(i, l) + cost_to_go_last;
+        end
+        
+        % gauss-seidel update
+        [J_opt_next(i), u_opt_ind(i)] = min(cost_to_go_candidates);
     end
     
-    if norm(J_opt_prev - J_opt) <= thres
-        break;
+    if (norm(J_opt - J_opt_next) < terminationThreshold)
+        break
     end
     
-    iterator = iterator + 1;
+    J_opt = J_opt_next;
     
 end
 
 %% Handle terminal state
 % Do yo need to do something with the teminal state before starting policy
 % iteration ? Probably assign J_opt zero cost there...
-global TERMINAL_STATE_INDEX
+
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-% TODO: what do they mean?
 J_opt(TERMINAL_STATE_INDEX) = 0;
 
 end
