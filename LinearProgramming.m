@@ -54,7 +54,7 @@ b = [];
 % ub = [];
 % options = optimoptions('linprog','Algorithm','interior-point');
 
-% filter out terminal state
+% "filter out" terminal state
 P_opt = P;
 P_opt(TERMINAL_STATE_INDEX, :, :) = 0;
 
