@@ -26,19 +26,19 @@ close all;
 clc;
 
 global DEBUG
-DEBUG = 1;
+DEBUG = 0;
 
 %% Options
 % [M, N]
 mapSize = [20, 17];
 % Set to true to generate a random map of size mapSize, else set to false
 % to load the pre-exsisting example map
-generateRandomWorld = false;
+generateRandomWorld = true;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
 PLOT_POLICY = true;
-PLOT_COST = false;
+PLOT_COST = true;
 
 %% Global problem parameters
 % IMPORTANT: Do not add or remove any global parameter in main.m
@@ -120,7 +120,7 @@ if transitionProbabilitiesImplemented
     % TODO: Question b)
     P = ComputeTransitionProbabilities(stateSpace, map);
     
-    if DEBUG
+    if DEBUG && all(size(P) == [476, 476, 5])
         P_my = P;
         load('exampleP.mat')
         % difference: +: there shouldn't be an entry, -: there's something missing
@@ -147,7 +147,7 @@ if stageCostsImplemented
     % TODO: Question c)
     G = ComputeStageCosts(stateSpace, map);
     
-    if DEBUG
+    if DEBUG && all(size(G) == [476, 5])
         G_my = G;
         load('exampleG.mat')
         % difference: +: there shouldn't be an entry, -: there's something missing
@@ -204,8 +204,8 @@ if linearProgrammingImplemented
         disp('[ERROR] the size of J and u must be K')
     end
 end
-if DEBUG && linearProgrammingImplemented && valueIterationImplemented
-    J_diff = J_opt_vi - J_opt_lp;
+if DEBUG && policyIterationImplemented && valueIterationImplemented
+    J_diff = J_opt_vi - J_opt_pi;
     disp('Index where optimal costs of LP and VI differ: ')
     find(J_diff ~= 0, 1)
 end
