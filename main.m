@@ -26,14 +26,14 @@ close all;
 clc;
 
 global DEBUG
-DEBUG = 0;
+DEBUG = 1;
 
 %% Options
 % [M, N]
 mapSize = [20, 17];
 % Set to true to generate a random map of size mapSize, else set to false
 % to load the pre-exsisting example map
-generateRandomWorld = true;
+generateRandomWorld = false;
 
 % Plotting options
 global PLOT_POLICY PLOT_COST
@@ -203,6 +203,11 @@ if linearProgrammingImplemented
     if size(J_opt_lp,1)~=K || size(u_opt_ind_lp,1)~=K
         disp('[ERROR] the size of J and u must be K')
     end
+end
+if DEBUG && linearProgrammingImplemented && valueIterationImplemented
+    J_diff = J_opt_vi - J_opt_lp;
+    disp('Index where optimal costs of LP and VI differ: ')
+    find(J_diff ~= 0, 1)
 end
 
 %% Plot results

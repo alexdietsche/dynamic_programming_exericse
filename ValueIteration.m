@@ -32,7 +32,7 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 global K HOVER
 J_opt = rand(K, 1);
 u_opt_ind = zeros(K, 1);
-thres = 0.001;
+thres = 0.00001;
 iterator = 0;
 
 % Results very similar to Alex' version, deviating by ~0.02 in J_opt with
@@ -42,6 +42,7 @@ while true
     
     J_opt_prev = J_opt;
     
+    % TODO: maybe exclude terminal state from this calculation
     for i = 1 : K
         [J_opt(i), u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))'*J_opt);
     end
