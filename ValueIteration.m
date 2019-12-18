@@ -32,7 +32,7 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 global K HOVER TERMINAL_STATE_INDEX
 
 % initialization
-terminationThreshold = 0.00001;
+terminationThreshold = 1e-8;
 
 J_opt = zeros(K, 1);
 J_opt_next = ones(K, 1);

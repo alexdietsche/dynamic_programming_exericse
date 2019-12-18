@@ -70,7 +70,7 @@ while true
     J_opt = (eye(size(P_opt)) - P_opt)\G_opt;
     
     % exit condition: iterate until cost-to-go is optimal
-    if J_opt_prev == J_opt
+    if abs(J_opt_prev - J_opt) < 1e-8
         break;
     end
 
