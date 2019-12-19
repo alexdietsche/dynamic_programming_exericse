@@ -1,4 +1,4 @@
-function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
+function [ J_opt, u_opt_ind ] = ValueIteration2(P, G)
 %VALUEITERATION Value iteration
 %   Solve a stochastic shortest path problem by Value Iteration.
 %
@@ -29,24 +29,35 @@ function [ J_opt, u_opt_ind ] = ValueIteration(P, G)
 %       	A (K x 1)-matrix containing the index of the optimal control
 %       	input for each element of the state space. Mapping of the
 %       	terminal state is arbitrary (for example: HOVER).
-global K HOVER
-global TERMINAL_STATE_INDEX
-J_opt = rand(K, 1);
+global K HOVER TERMINAL_STATE_INDEX
+
+% initialization
+terminationThreshold = 1e-8;
+
+J_opt = zeros(K, 1);
+J_opt_next = ones(K, 1);
 u_opt_ind = zeros(K, 1);
-thres = 0.00001;
-iterator = 0;
+
 
 while (true)
     
-    J_opt_prev = J_opt;
-    
-    for i = 1 : K
-        if i == TERMINAL_STATE_INDEX
-            J_opt(i) = 0;
-            u_opt_ind(i) = HOVER;
-        else
-            [J_opt(i), u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
+    for i = 1:K
+        cost_to_go_candidates = zeros(5, 1);
+        for l = 1:5
+            cost_to_go_last = 0;
+            for j = 1:K
+                if i == TERMINAL_STATE_INDEX
+                    cost_to_go_last = 0;
+                else
+                    cost_to_go_last = cost_to_go_last + P(i, j, l) * J_opt_next(j);
+                end
+                
+            end
+            cost_to_go_candidates(l) = G(i, l) + cost_to_go_last;
         end
+        
+        % gauss-seidel update
+        [J_opt_next(i), u_opt_ind(i)] = min(cost_to_go_candidates);
     end
     
     if (norm(J_opt - J_opt_next) < terminationThreshold)

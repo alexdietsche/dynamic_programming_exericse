@@ -173,7 +173,13 @@ if valueIterationImplemented
     disp('Solve stochastic shortest path problem with Value Iteration');
     
     % TODO: Question d)
+    tic
     [ J_opt_vi, u_opt_ind_vi ] = ValueIteration(P, G);
+    toc
+    
+    tic
+    [ J_opt_vi2, u_opt_ind_vi2 ] = ValueIteration2(P, G);
+    toc
     
     if size(J_opt_vi,1)~=K || size(u_opt_ind_vi,1)~=K
         disp('[ERROR] the size of J and u must be K')
