@@ -69,20 +69,20 @@ while true
     % solve for J: (I - P) must be invertible!
     J_opt = (eye(size(P_opt)) - P_opt)\G_opt;
     
-    % exit condition: iterate until cost-to-go is optimal
-    if abs(J_opt_prev - J_opt) < 1e-8
-        break;
-    end
+%     % exit condition: iterate until cost-to-go is optimal
+%     if J_opt_prev == J_opt
+%         break;
+%     end
 
     % policy improvement: obtain new stationary policy (same as VI)
     for i = 1 : K
         [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
     end
     
-%     % exit condition: iterate until policy is optimal
-%     if u_opt_prev == u_opt_ind
-%         break;
-%     end
+    % exit condition: iterate until policy is optimal
+    if u_opt_prev == u_opt_ind
+        break;
+    end
 end
 
 J_opt(TERMINAL_STATE_INDEX) = 0;
