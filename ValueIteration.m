@@ -36,10 +36,7 @@ u_opt_ind = zeros(K, 1);
 thres = 0.00001;
 iterator = 0;
 
-% Results very similar to Alex' version, deviating by ~0.02 in J_opt with
-% same threshold criterion.
-
-while true
+while (true)
     
     J_opt_prev = J_opt;
     
@@ -52,21 +49,21 @@ while true
         end
     end
     
-    if norm(J_opt_prev - J_opt) <= thres
-        break;
+    if (norm(J_opt - J_opt_next) < terminationThreshold)
+        break
     end
     
-    iterator = iterator + 1;
+    J_opt = J_opt_next;
     
 end
 
 %% Handle terminal state
 % Do yo need to do something with the teminal state before starting policy
 % iteration ? Probably assign J_opt zero cost there...
+
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-% TODO: what do they mean?
 J_opt(TERMINAL_STATE_INDEX) = 0;
 
 end

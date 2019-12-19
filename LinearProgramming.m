@@ -60,7 +60,7 @@ P_opt(TERMINAL_STATE_INDEX, :, :) = 0;
 
 for l = 1 : 5
     b = [b; G(:, l)];
-    A = [A; eye(size(P, [1,2])) - P_opt(:, :, l)];
+    A = [A; eye([size(P, 1), size(P, 2)]) - P_opt(:, :, l)];
 end
 
 % get rid of inequalities containing inf
@@ -72,9 +72,9 @@ A(delete_mask, :) = [];
 J_opt = linprog(f,A,b);
 
 % obtain stationary policy given optimal cost-to-go
-    for i = 1 : K
-        [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
-    end
+for i = 1 : K
+    [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
+end
 
 J_opt(TERMINAL_STATE_INDEX) = 0;
     
