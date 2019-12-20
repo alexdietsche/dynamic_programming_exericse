@@ -30,9 +30,6 @@ global FREE TREE SHOOTER PICK_UP DROP_OFF BASE
 global NORTH SOUTH EAST WEST HOVER
 global K TERMINAL_STATE_INDEX
 
-% TODO: 
-% - figure out how to avoid small rounding errors of base in probabilities near shooters
-
 % coords of pick-up
 [m_p, n_p] = find(map==PICK_UP);
 
@@ -156,8 +153,5 @@ for i = 1:K
     end
             
 end
-
-% Floor P to get rid of very small deviations
-% P = floor(P * 10^7) / 10^7;
 
 end

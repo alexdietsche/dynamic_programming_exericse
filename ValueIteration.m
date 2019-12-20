@@ -33,11 +33,8 @@ global K HOVER
 global TERMINAL_STATE_INDEX
 J_opt = rand(K, 1);
 u_opt_ind = zeros(K, 1);
-thres = 0.00001;
+thres = 0.000001;
 iterator = 0;
-
-% Results very similar to Alex' version, deviating by ~0.02 in J_opt with
-% same threshold criterion.
 
 while true
     
@@ -66,7 +63,6 @@ end
 % IMPORTANT: You can use the global variable TERMINAL_STATE_INDEX computed
 % in the ComputeTerminalStateIndex.m file (see main.m)
 
-% TODO: what do they mean?
 J_opt(TERMINAL_STATE_INDEX) = 0;
 
 end

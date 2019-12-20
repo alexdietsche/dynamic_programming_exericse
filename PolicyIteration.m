@@ -47,16 +47,16 @@ J_opt = zeros(K, 1);
 % commanding HOVER at all states
 u_opt_ind = 5 * ones(K, 1);
 
+thres = 0.000001;
+
 while true
     
     J_opt_prev = J_opt;
-    u_opt_prev = u_opt_ind;
     
     % policy evaluation: solve system of linear equations
     % P_opt and G_opt correspond to P and G with the current optimal policy
     % without the terminal state
     P_opt = zeros(K, K);
-    % TODO: find better way to do this
     for i = 1 : K
         if i == TERMINAL_STATE_INDEX
             P_opt(i, :) = zeros(1, K);
@@ -69,20 +69,16 @@ while true
     % solve for J: (I - P) must be invertible!
     J_opt = (eye(size(P_opt)) - P_opt)\G_opt;
     
-%     % exit condition: iterate until cost-to-go is optimal
-%     if J_opt_prev == J_opt
-%         break;
-%     end
+    % exit condition: iterate until cost-to-go is optimal
+    if norm(J_opt_prev - J_opt) <= thres
+        break;
+    end
 
     % policy improvement: obtain new stationary policy (same as VI)
     for i = 1 : K
         [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
     end
     
-    % exit condition: iterate until policy is optimal
-    if u_opt_prev == u_opt_ind
-        break;
-    end
 end
 
 J_opt(TERMINAL_STATE_INDEX) = 0;

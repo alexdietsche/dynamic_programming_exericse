@@ -48,11 +48,6 @@ f = -1 * ones(K, 1);
 % inequality constraints for optimal cost-to-go expressed for every input
 A = [];
 b = [];
-% Aeq = [];
-% beq = [];
-% lb = [];
-% ub = [];
-% options = optimoptions('linprog','Algorithm','interior-point');
 
 % "filter out" terminal state
 P_opt = P;
@@ -72,11 +67,11 @@ A(delete_mask, :) = [];
 J_opt = linprog(f,A,b);
 
 % obtain stationary policy given optimal cost-to-go
-    for i = 1 : K
-        [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
-    end
+for i = 1 : K
+    [~, u_opt_ind(i)] = min(G(i, :)' + squeeze(P(i, :, :))' * J_opt);
+end
 
 J_opt(TERMINAL_STATE_INDEX) = 0;
-    
+
 end
 
