@@ -60,7 +60,7 @@ P_opt(TERMINAL_STATE_INDEX, :, :) = 0;
 
 for l = 1 : 5
     b = [b; G(:, l)];
-    A = [A; eye(size(P, [1,2])) - P_opt(:, :, l)];
+    A = [A; eye(size(P,1), size(P,2)) - P_opt(:, :, l)];
 end
 
 % get rid of inequalities containing inf
